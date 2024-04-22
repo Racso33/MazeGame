@@ -34,6 +34,11 @@ void generateMaze(Cell* cell);
 int reverseDirection(int n);
 void getAllRectangles(std::vector<Rect>* res);
 double raycast(double x, double y, double angle);
+void drawCell(Cell* c);
+bool isJunction(int x, int y);
+bool canTraverse(int x1, int y1, int x2, int y2);
+int getDirection(int x, int y);
+void initCells();
 
 /* sdl */
 SDL_Renderer* renderer;
@@ -46,10 +51,13 @@ int windowWidth, windowHeight;
 int windowId;
 bool quit;
 /* game */
-Cell cells[16][16];
+#define MAZEWIDTH 8
+#define MAZEHEIGHT 8
+Cell cells[MAZEHEIGHT][MAZEHEIGHT];
 int cellSize;
-int cellCoreSize;
 double px = 0.5, py = 0.5;
+bool pHasTarget;
+int pDir;
 
 int main(int argc, char **argv) {
     std::srand(std::time(0));
@@ -135,20 +143,10 @@ void gameSetup() {
     windowWidth = 1280;
     windowHeight = 960;
     cellSize = 56;
-    cellCoreSize = cellSize / 2;
-    /* initialize cells */
-    for (int j = 0; j < 16; j++) {
-        for (int i = 0; i < 16; i++) {
-            cells[j][i].x = i;
-            cells[j][i].y = j;
-            cells[j][i].visited = false;
-            for (int m = 0; m < 4; m++) {
-                cells[j][i].walls[m] = true;
-            }
-        }
-    }
+    pDir = 0;
+    initCells();
     /* generate maze */
-    generateMaze(&cells[0][0]);
+    generateMaze(&cells[rand() % MAZEHEIGHT][rand() % MAZEWIDTH]);
 }
 
 void gameLoop() {
@@ -157,67 +155,33 @@ void gameLoop() {
     SDL_RenderClear(renderer);
 
     /* do stuff */
-    for (int j = 0; j < 16; j++) {
-        for (int i = 0; i < 16; i++) {
-            /* cell core */ {
-                SDL_Rect r = { cellSize * i + cellCoreSize/2
-                             , cellSize * j + cellCoreSize/2
-                             , cellCoreSize, cellCoreSize };
-                SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-                SDL_RenderFillRect(renderer, &r);
-            }
-            /* cell walls */
-            for (int m = 0; m < 4; m++) {
-                if (cells[j][i].walls[m]) {
-                    continue;
-                }
-                SDL_Rect r;
-                switch (m) {
-                case 0:
-                    r.x = (cellSize * i) + cellSize / 2 + cellSize / 4;
-                    r.y = (cellSize * j) + cellSize / 4;
-                    r.w = cellSize / 4;
-                    r.h = cellSize / 2;
-                    break;
-                case 1:
-                    r.x = (cellSize * i) + cellSize / 4;
-                    r.y = (cellSize * j) + cellSize / 2 + cellSize/4;
-                    r.w = cellSize / 2;
-                    r.h = cellSize / 4;
-                    break;
-                case 2:
-                    r.x = (cellSize * i);
-                    r.y = (cellSize * j) + cellSize / 4;
-                    r.w = cellSize / 4;
-                    r.h = cellSize / 2;
-                    break;
-                default:
-                    r.x = (cellSize * i) + cellSize / 4;
-                    r.y = (cellSize * j);
-                    r.w = cellSize / 2;
-                    r.h = cellSize / 4;
-                    break;
-                }
-                //SDL_Rect r = { (cellSize*1 * i) + (cellSize/2 * mx)
-                //             , (cellSize * 1 * j) + (cellSize / 2 * my)
-                //             , cellSize / 2, cellSize / 2};
-                SDL_SetRenderDrawColor(renderer, 255,255,255, 255);
-                SDL_RenderFillRect(renderer, &r);
-            }
-
-            /* raycast */ {
-                //double d = raycast(px,py, 0);
-                //SDL_SetRenderDrawColor(renderer, 255, 0,0, 255);
-                //SDL_RenderDrawLine(renderer, px*cellSize, py*cellSize, px * cellSize, (py + d) * cellSize);
-            }
+    for (int j = 0; j < MAZEHEIGHT; j++) {
+        for (int i = 0; i < MAZEWIDTH; i++) {
+            drawCell(&cells[j][i]);
         }
     }
+    if (canTraverse(px,py, px+directions[pDir][0],py+directions[pDir][1])) {
+        px += directions[pDir][0];
+        py += directions[pDir][1];
+    }
+    if(!canTraverse(px, py, px + directions[pDir][0], py + directions[pDir][1]) || isJunction(px,py)) {
+        pDir = rand() % 4;
+    }
+    if ((int)px == MAZEWIDTH-1 && (int)py == MAZEHEIGHT-1) {
+        initCells();
+        generateMaze(&cells[rand() % MAZEHEIGHT][rand() % MAZEWIDTH]);
+        px = 0.5;
+        py = 0.5;
+    }
+    SDL_Rect r = { px * cellSize, py * cellSize, 30,30 };
+    SDL_SetRenderDrawColor(renderer, 255, 120, 120, 255);
+    SDL_RenderFillRect(renderer, &r);
 
     /* sdl */
     SDL_RenderPresent(renderer);
 }
 void getCellAt(Cell** res, int x, int y) {
-    if (x < 0 || x >= 16 || y < 0 || y >= 16) {
+    if (x < 0 || x >= MAZEWIDTH || y < 0 || y >= MAZEHEIGHT) {
         *res = 0;
         return;
     }
@@ -291,8 +255,8 @@ double raycast(double x, double y, double angle) {
 }
 
 void getAllRectangles(std::vector<Rect>* res) {
-    for (int j = 0; j < 16; j++) {
-        for (int i = 0; i < 16; i++) {
+    for (int j = 0; j < MAZEHEIGHT; j++) {
+        for (int i = 0; i < MAZEWIDTH; i++) {
             Rect r;
             /* cell core */
             r.x = cells[j][i].x + 0.25;
@@ -332,6 +296,77 @@ void getAllRectangles(std::vector<Rect>* res) {
                     break;
                 }
                 res->push_back(r);
+            }
+        }
+    }
+}
+void drawCell(Cell* c) {
+    SDL_Rect r = { c->x * cellSize, c->y * cellSize, cellSize,cellSize };
+    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+    SDL_RenderFillRect(renderer, &r);
+    /* walls */
+    SDL_SetRenderDrawColor(renderer, 255, 30, 30, 255);
+    SDL_Rect w;
+    if (c->walls[2]) {
+        w.x = r.x;
+        w.w = cellSize / 10;
+        w.y = r.y;
+        w.h = r.h;
+        SDL_RenderFillRect(renderer, &w);
+    }
+    if (c->walls[0]) {
+        w.x = r.x + cellSize - (cellSize / 10);
+        w.w = cellSize / 10;
+        w.y = r.y;
+        w.h = r.h;
+        SDL_RenderFillRect(renderer, &w);
+    }
+    if (c->walls[3]) {
+        w.x = r.x;
+        w.w = r.w;
+        w.y = r.y;
+        w.h = cellSize / 10;
+        SDL_RenderFillRect(renderer, &w);
+    }
+    if (c->walls[1]) {
+        w.x = r.x;
+        w.w = r.w;
+        w.y = r.y + cellSize - (cellSize / 10);
+        w.h = cellSize / 10;
+        SDL_RenderFillRect(renderer, &w);
+    }
+}
+bool isJunction(int x, int y) {
+    int openWalls = 0;
+    Cell* c = &cells[y][x];
+    for (int i = 0; i < 4; i++) {
+        if (!c->walls[i]) {
+            openWalls++;
+        }
+    }
+    return openWalls >= 3;
+}
+bool canTraverse(int x1, int y1, int x2, int y2) {
+    Cell* c = &cells[y1][x1];
+    int d = getDirection(x2 - x1, y2 - y1);
+    return !c->walls[d];
+}
+int getDirection(int x, int y) {
+    for (int i = 0; i < 4; i++) {
+        if (x == directions[i][0] && y == directions[i][1]) {
+            return i;
+        }
+    }
+    return -1;
+}
+void initCells() {
+    for (int j = 0; j < MAZEHEIGHT; j++) {
+        for (int i = 0; i < MAZEWIDTH; i++) {
+            cells[j][i].x = i;
+            cells[j][i].y = j;
+            cells[j][i].visited = false;
+            for (int m = 0; m < 4; m++) {
+                cells[j][i].walls[m] = true;
             }
         }
     }
