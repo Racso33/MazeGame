@@ -69,7 +69,7 @@ int main(int argc, char **argv) {
     windowId = SDL_GetWindowID(window);
     renderer = SDL_CreateRenderer(window, -1, 0);
     TTF_Init();
-    font = TTF_OpenFont("D:\\Programming Libraries\\Roboto\\Roboto-Medium.ttf", 24);
+    font = TTF_OpenFont("E:\\Programming Libraries\\Roboto\\Roboto-Medium.ttf", 24);
 
     while (!quit) {
         // sdl stuff
