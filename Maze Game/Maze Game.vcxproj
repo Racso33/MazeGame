@@ -134,11 +134,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\Solitaire 2\Solitaire 2\Src\Game.cpp" />
-    <ClCompile Include="..\..\Solitaire 2\Solitaire 2\Src\GameIO.cpp" />
+    <ClCompile Include="Source\GameIO.cpp" />
+    <ClCompile Include="Source\Map.cpp" />
+    <ClCompile Include="Source\MazeGame.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\Solitaire 2\Solitaire 2\Src\GameIO.h" />
+    <ClInclude Include="Source\GameIO.h" />
+    <ClInclude Include="Source\Map.h" />
+    <ClInclude Include="Source\MazeGame.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
