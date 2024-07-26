@@ -132,7 +132,7 @@ void IOFrame() {
         }
     }
     SDL_RenderPresent(renderer);
-    SDL_SetRenderDrawColor(renderer, 96, 128, 255, 255);
+    SDL_SetRenderDrawColor(renderer, 96, 128, 96, 255);
     SDL_RenderClear(renderer);
 }
 void IODrawImage(const char* imagePath, int x, int y, int w, int h) {

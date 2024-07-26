@@ -15,5 +15,5 @@ void GetMap(int* hcells, int* vcells);
    Walk x ammount.
 */
 
-Point Intersection(Point p1, Point p2);
+bool Intersection(Point p1, Point p2);
 Point Raycast(Point p, double angle);

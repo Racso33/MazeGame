@@ -69,7 +69,7 @@ Point Shortest(Point p, Point p1, Point p2) {
 
 /* Point of impact
    From a point, going to a line */
-Point RaycastEx(Point p, double angle, int maxsteps) {
+Point RaycastEx(Point p, double angle, int maxsteps, bool* error) {
     /* Possible bug: 
         Rounding errors 
     */
@@ -94,13 +94,18 @@ Point RaycastEx(Point p, double angle, int maxsteps) {
     if (w1 && !w2) return p1;
     else if (!w1 && w2) return p2;
     else return Shortest(p, p1, p2);
+    if(error) *error = true;
+    return {};
 }
 Point Raycast(Point p, double angle) {
-    return RaycastEx(p, angle, -1);
+    return RaycastEx(p, angle, -1, 0);
 }
-Point Intersection(Point p1, Point p2) {
+bool Intersection(Point p1, Point p2) {
     Point dp = { p2.x - p1.x, p2.y - p1.y };
     double angle = atan2(dp.y, dp.x);
     int steps = ceil(hypot(dp.x, dp.y));
-    return RaycastEx(p1, angle, steps);
+    bool error;
+    Point res = RaycastEx(p1, angle, steps, &error);
+    if (error) return false;
+    return true;
 }

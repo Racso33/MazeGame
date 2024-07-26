@@ -1,6 +1,8 @@
 #include "MazeGame.h"
 
+extern int directions[4][2];
 Point player;
+int playerd;
 double playerang;
 double fov;
 int raycount;
@@ -21,7 +23,10 @@ Point Minimap_GetPointRev(int x, int y) {
     return { (double)x / MinimapScale, (double)y / MinimapScale };
 }
 
+void GenerateMaze(Point origin);
+
 void DrawMinimap() {
+    bool mouse = false;
     int i, j;
     int hcellcount, vcellcount;
     GetMap(&hcellcount, &vcellcount);
@@ -56,10 +61,12 @@ void DrawMinimap() {
         IODrawLine(mp, mp2, 1);
     }
 
-    int mx, my;
-    IOGetMousePos(&mx, &my);
-    Point p = Minimap_GetPointRev(mx, my);
-    player = p;
+    if (mouse) {
+        int mx, my;
+        IOGetMousePos(&mx, &my);
+        Point p = Minimap_GetPointRev(mx, my);
+        player = p;
+    }
 }
 void DrawFirstPerson() {
     int i;
@@ -68,15 +75,18 @@ void DrawFirstPerson() {
     for (i = 0; i < raycount; i++) {
         double rang = playerang - (((double)raycount * fov) / 2) + ((double)i * fov);
         Point p2 = Raycast(player, rang);
+        bool colhit = false;
+        if (p2.x - trunc(p2.x)) colhit = true;
         double h = hypot(p2.x - player.x, p2.y - player.y);
         int lh = sheight / h * 1.5;
         int lw = 16;
-        IODrawRect(swidth/2 - (lw*raycount / 2) + i * lw, sheight / 2 - lh / 2, lw, lh, fmax(50 - h*10, 0), fmax(220 - h*10, 0), fmax(50 - h*10, 0));
+        IODrawRect(swidth/2 - (lw*raycount / 2) + i * lw, sheight / 2 - lh / 2, lw, lh, colhit ? 50 : 30, colhit ? 220 : 170, colhit ? 50 : 30);
     }
 }
 
 void GameInit() {
-    SetMap(32, 32);
+    int mapw = 16, maph = 16;
+    SetMap(mapw, maph);
     int i, j;
     //for (i = 0; i < 8; i++) {
     //    SetVWall(1, 8, i);
@@ -85,6 +95,7 @@ void GameInit() {
     //    SetHWall(1, 8, i);
     //}
     SetHWall(1, 5, 4);
+    GenerateMaze({ (double)mapw-1,(double)maph-1});
 
     player = { 3.4,3.5 };
     playerang = 0;
@@ -96,6 +107,9 @@ void GameLoop() {
         playerang += 0.01;
         if (playerang > M_PI*2) playerang = 0;
     }
+    //Point player2 = { player.x + directions[playerd][0], player.y + directions[playerd][1] };
+    //if(inter)
+
     /* Draw minimap */
     DrawMinimap();
     DrawFirstPerson();
