@@ -76,8 +76,8 @@ Point RaycastEx(Point p, double angle, int maxsteps, bool* error) {
     /* step along cols and rows. If a wall is there, return. */
     Point p1 = p, p2 = p;
     int w1 = 0, w2 = 0;
-    int steps = 0;
-    while((!w1 || !w2) && (maxsteps == -1 || steps <= maxsteps)) {
+    int steps = -1;
+    while((!w1 || !w2) && (maxsteps == -1 || steps < maxsteps)) {
         if(!w1) p1 = StepColumn(p1, angle);
         if(!w2) p2 = StepRow(p2, angle);
         /* pick shortest one */
@@ -91,11 +91,11 @@ Point RaycastEx(Point p, double angle, int maxsteps, bool* error) {
         */
         steps++;
     }
-    if (w1 && !w2) return p1;
-    else if (!w1 && w2) return p2;
-    else return Shortest(p, p1, p2);
-    if(error) *error = true;
-    return {};
+    if (maxsteps != -1 && steps >= maxsteps) {
+        if(error) *error = true;
+        return {};
+    }
+    return Shortest(p, p1, p2);
 }
 Point Raycast(Point p, double angle) {
     return RaycastEx(p, angle, -1, 0);
@@ -103,8 +103,8 @@ Point Raycast(Point p, double angle) {
 bool Intersection(Point p1, Point p2) {
     Point dp = { p2.x - p1.x, p2.y - p1.y };
     double angle = atan2(dp.y, dp.x);
-    int steps = ceil(hypot(dp.x, dp.y));
-    bool error;
+    int steps = 1;
+    bool error = false;
     Point res = RaycastEx(p1, angle, steps, &error);
     if (error) return false;
     return true;

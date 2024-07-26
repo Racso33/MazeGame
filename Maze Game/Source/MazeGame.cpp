@@ -6,6 +6,8 @@ int playerd;
 double playerang;
 double fov;
 int raycount;
+int timer;
+double nplayerang;
 
 int MinimapScale = 10;
 int MinimapWallScale = 1;
@@ -24,6 +26,35 @@ Point Minimap_GetPointRev(int x, int y) {
 }
 
 void GenerateMaze(Point origin);
+
+int DirTurn(int i, char d) {
+    if (d == 'r') i += 1;
+    if (d == 'l') i -= 1;
+    if (d == 'b') i += 2;
+    if (i > 3) {
+        i = 0 + i - 4;
+    }
+    if (i < 0) {
+        i = 3 + i - -1;
+    }
+    return i;
+}
+double AngDirTurn(double i, double amm) {
+    i += amm;
+    if (i > M_PI) {
+        i = -M_PI + (i - M_PI);
+    }
+    if (i < -M_PI) {
+        i = M_PI + (i - -M_PI);
+    }
+    return i;
+}
+double ToAngle(double i) {
+    return fmod(i, M_PI);
+}
+double AngAngDirTurn(double playerang, double nplayerang) {
+    return -1;
+}
 
 void DrawMinimap() {
     bool mouse = false;
@@ -51,7 +82,7 @@ void DrawMinimap() {
     double outer, inner;
     /* draw field of vision */
     for (i = 0; i < raycount; i++) {
-        double rang = playerang - (((double)raycount*fov) / 2) + ((double)i*fov);
+        double rang = ToAngle(playerang) - (((double)raycount*fov) / 2) + ((double)i*fov);
         if (i == 0) inner = rang;
         if (i == 89) outer = rang;
         Point p2 = Raycast(player, rang);
@@ -73,13 +104,13 @@ void DrawFirstPerson() {
     int swidth, sheight;
     IOGetWindowDims(&swidth, &sheight);
     for (i = 0; i < raycount; i++) {
-        double rang = playerang - (((double)raycount * fov) / 2) + ((double)i * fov);
+        double rang = ToAngle(playerang) - (((double)raycount * fov) / 2) + ((double)i * fov);
         Point p2 = Raycast(player, rang);
         bool colhit = false;
         if (p2.x - trunc(p2.x)) colhit = true;
         double h = hypot(p2.x - player.x, p2.y - player.y);
-        int lh = sheight / h * 1.5;
-        int lw = 16;
+        int lh = sheight / h;
+        int lw = (swidth-100) / raycount;
         IODrawRect(swidth/2 - (lw*raycount / 2) + i * lw, sheight / 2 - lh / 2, lw, lh, colhit ? 50 : 30, colhit ? 220 : 170, colhit ? 50 : 30);
     }
 }
@@ -107,12 +138,45 @@ void GameLoop() {
         playerang += 0.01;
         if (playerang > M_PI*2) playerang = 0;
     }
-    //Point player2 = { player.x + directions[playerd][0], player.y + directions[playerd][1] };
-    //if(inter)
+    if (nplayerang == 0 && timer % 75 == 0) {
+        Point forward = { player.x + directions[playerd][0], player.y + directions[playerd][1] };
+        Point back = { player.x + directions[DirTurn(playerd, 'b')][0], player.y + directions[DirTurn(playerd, 'b')][1] };
+        Point left = { player.x + directions[DirTurn(playerd, 'l')][0], player.y + directions[DirTurn(playerd, 'l')][1] };
+        Point right = { player.x + directions[DirTurn(playerd, 'r')][0], player.y + directions[DirTurn(playerd, 'r')][1] };
+        if (!Intersection(player, left)) {
+            playerd = DirTurn(playerd, 'l');
+            nplayerang = -(M_PI/2);
+        }
+        else if (!Intersection(player, forward)) {
+            (void)0;
+        }
+        else if (!Intersection(player, right)) { 
+            playerd = DirTurn(playerd, 'r');
+            nplayerang = (M_PI / 2);
+        }
+        else if (!Intersection(player, back)) {
+            playerd = DirTurn(playerd, 'b');
+            nplayerang = M_PI;
+        }
+        player.x += directions[playerd][0];
+        player.y += directions[playerd][1];
+    }
+    double step = 0.01;
+    if (nplayerang < 0) {
+        playerang += -step;
+        nplayerang += step;
+    }
+    if(nplayerang > 0) {
+        playerang += step;
+        nplayerang -= step;
+    }
+    if (abs(nplayerang) - 0.02 < 0) 
+        nplayerang = 0;
 
     /* Draw minimap */
-    DrawMinimap();
     DrawFirstPerson();
+    DrawMinimap();
+    timer++;
 }
 
 int main(int argc, char** argv) {
