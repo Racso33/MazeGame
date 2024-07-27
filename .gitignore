@@ -361,3 +361,6 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+/Maze Game/SDL2.dll
+/Maze Game/SDL2_ttf.dll
+/Maze Game/main.cpp
