@@ -50,11 +50,16 @@ void Player_Update(Player* p) {
        For now though, I can just always have smooth look.
     */
     if (abs(abs(p->tang) - abs(p->ang)) - 0.04 >= 0) {
+        /* angle difference, turnspeed with difference */
+        //double a = ToAngle(p->tang - p->ang) - M_PI;
+        //double m = abs(a / (ToAngle(p->ang) - M_PI)) * 0.1;
+        //double turn = p->turnspeed * m;
+        double turn = p->turnspeed;
         if (p->ang < p->tang) {
-            p->ang += p->turnspeed;
+            p->ang += turn;
         }
         else {
-            p->ang -= p->turnspeed;
+            p->ang -= turn;
         }
     }
     /* smoothly move pos to target */
@@ -62,7 +67,7 @@ void Player_Update(Player* p) {
     double tdh = hypot(td.x, td.y);
     if (p->hasTarget && abs(tdh) - 0.2 < 0) {
         p->hasTarget = false;
-        p->movecooldown = 10;
+        p->movecooldown = 0;
     }
     if (p->hasTarget) {
         p->pos.x += td.x / tdh * p->movespeed;

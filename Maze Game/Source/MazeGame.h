@@ -29,5 +29,6 @@ void NewMaze();
 void GenerateMaze(Point origin);
 int GetColumns();
 int GetRows();
+double ToAngle(double a);
 
 extern Player player;

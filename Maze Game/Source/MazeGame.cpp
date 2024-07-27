@@ -151,7 +151,7 @@ void GameInit() {
     //}
     memset(&player, 0, sizeof(Player));
     fov = 1.57; /* 90 degrees */
-    player.movespeed = 0.02;
+    player.movespeed = 0.03;
     player.turnspeed = 0.05;
     NewMaze();
 }
