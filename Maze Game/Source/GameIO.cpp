@@ -81,9 +81,9 @@ void IOFrame() {
     SDL_Event ev;
     int i;
 
-    for (i = 0; i < 3; i++) {
+    /*for (i = 0; i < 3; i++) {
         mousePressed[i] = false;
-    }
+    }*/
     mouseScroll = 0;
     while (SDL_PollEvent(&ev)) {
         switch (ev.type) {
@@ -116,6 +116,9 @@ void IOFrame() {
 
         case SDL_MOUSEBUTTONDOWN:
             mousePressed[ev.button.button - 1] = true;
+            break;
+        case SDL_MOUSEBUTTONUP:
+            mousePressed[ev.button.button - 1] = false;
             break;
 
         case SDL_KEYDOWN:

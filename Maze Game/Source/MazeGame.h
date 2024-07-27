@@ -12,5 +12,22 @@
 #include "GameIO.h"
 #include "Map.h"
 
+struct Player {
+    Point pos;
+    Point target;
+    int dir;
+    bool hasTarget;
+    double ang;
+    double tang;
+    int timer;
+    double turnspeed;
+    double movespeed;
+    int movecooldown;
+};
+
+void NewMaze();
+void GenerateMaze(Point origin);
 int GetColumns();
 int GetRows();
+
+extern Player player;

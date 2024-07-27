@@ -138,6 +138,7 @@
     <ClCompile Include="Source\Map.cpp" />
     <ClCompile Include="Source\MazeGame.cpp" />
     <ClCompile Include="Source\MazeGen.cpp" />
+    <ClCompile Include="Source\Player.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\GameIO.h" />
