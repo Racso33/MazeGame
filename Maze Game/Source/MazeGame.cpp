@@ -3,7 +3,6 @@
 extern int directions[4][2];
 Player player;
 double fov;
-int raycount;
 int timer;
 
 int MinimapScale = 10;
@@ -78,14 +77,13 @@ void DrawMinimap() {
         }
     }
 
-    double outer, inner;
     /* draw field of vision */
+    int swidth, sheight;
+    IOGetWindowDims(&swidth, &sheight);
+    int raycount = swidth/(swidth/16);
     for (i = 0; i < raycount; i++) {
-        double rang = ToAngle(player.ang - (((double)raycount*fov) / 2) + ((double)i*fov));
-        if (i == 0) inner = rang;
-        if (i == 89) outer = rang;
+        double rang = ToAngle(player.ang - (fov / 2) + i * (fov / raycount));
         Point p2 = Raycast(player.pos, rang);
-        //printf("%f %f\n", p2.x,p2.y);
         Point mp = Minimap_GetPoint(player.pos.x, player.pos.y);
         Point mp2 = Minimap_GetPoint(p2.x, p2.y);
         IODrawLine(mp, mp2, 1);
@@ -102,14 +100,15 @@ void DrawFirstPerson() {
     int i;
     int swidth, sheight;
     IOGetWindowDims(&swidth, &sheight);
+    int raycount = swidth/4;
     double range = raycount * fov;
     for (i = 0; i < raycount; i++) {
-        double rang = ToAngle(player.ang - (((double)raycount * fov) / 2) + ((double)i * fov));
+        double rang = ToAngle(player.ang - (fov / 2) + i * (fov/raycount));
         Point p2 = Raycast(player.pos, rang);
         bool colhit = false;
         if (p2.x - trunc(p2.x)) colhit = true;
         double h = hypot(p2.x - player.pos.x, p2.y - player.pos.y) * cos(rang - player.ang);
-        double lh = sheight / h * 0.3;
+        double lh = (sheight/4) / h;
         double lw = (double)swidth / raycount;
         IODrawRect(swidth/2.0f - (lw*raycount / 2) + i*lw, sheight / 2.0f - lh / 2, lw+1, lh, colhit ? 50 : 30, colhit ? 220 : 170, colhit ? 50 : 30);
     }
@@ -141,18 +140,15 @@ void GameInit() {
     player.turnspeed = 0.05;
     player.pos.x = 0.5;
     player.pos.y = 0.5;
-    fov = 0.015;
-    raycount = 90;
+    fov = 1.57; /* 90 degrees */
 }
 void Player_Update(Player* p);
 void GameLoop() {
     int mapw, maph;
     GetMap(&mapw, &maph);
 
-    if (!IOGetMousePressed(2) && IOGetMouseScroll() == -1) fov += 0.001;
-    if (!IOGetMousePressed(2) && IOGetMouseScroll() == 1) fov -= 0.001;
-    if (IOGetMousePressed(2) && IOGetMouseScroll() == 1) raycount += 1;
-    if (IOGetMousePressed(2) && IOGetMouseScroll() == -11) raycount -= 1;
+    if (!IOGetMousePressed(2) && IOGetMouseScroll() == -1) fov += 0.1;
+    if (!IOGetMousePressed(2) && IOGetMouseScroll() == 1) fov -= 0.1;
     Player_Update(&player);
 
     /* Draw minimap */
@@ -162,6 +158,7 @@ void GameLoop() {
 }
 
 int main(int argc, char** argv) {
+    std::srand(std::time(0));
     IOInit();
     GameInit();
     while (!IOShouldClose()) {
