@@ -26,3 +26,4 @@ int IOGetMouseScroll();
 bool IOMouseWithinRect(Rect r);
 void IODrawLine(Point p1, Point p2, int thick);
 bool IOKeyIsDown(int key);
+void IOSetBgColor(int r, int g, int b);

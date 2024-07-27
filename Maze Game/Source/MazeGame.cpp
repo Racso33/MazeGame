@@ -4,6 +4,8 @@ extern int directions[4][2];
 Player player;
 double fov;
 int timer;
+bool colors[3];
+bool bg[3];
 
 int MinimapScale = 10;
 int MinimapWallScale = 1;
@@ -108,9 +110,15 @@ void DrawFirstPerson() {
         bool colhit = false;
         if (p2.x - trunc(p2.x)) colhit = true;
         double h = hypot(p2.x - player.pos.x, p2.y - player.pos.y) * cos(rang - player.ang);
-        double lh = (sheight/4) / h;
+        double lh = (sheight/3) / h;
         double lw = (double)swidth / raycount;
-        IODrawRect(swidth/2.0f - (lw*raycount / 2) + i*lw, sheight / 2.0f - lh / 2, lw+1, lh, colhit ? 50 : 30, colhit ? 220 : 170, colhit ? 50 : 30);
+        int r = colors[0] ? 230 : 170;
+        if (colhit) r *= 0.7;
+        int g = colors[1] ? 230 : 170;
+        if (colhit) g *= 0.7;
+        int b = colors[2] ? 230 : 170;
+        if (colhit) b *= 0.7;
+        IODrawRect(swidth/2.0f - (lw*raycount / 2) + i*lw, sheight / 2.0f - lh / 2, lw+1, lh, r,g,b);
     }
 }
 
@@ -121,9 +129,18 @@ void NewMaze() {
     player.pos.x = player.pos.y = player.ang = player.dir = player.tang = 0;
     player.hasTarget = false;
     player.pos.x = 0.5; player.pos.y = 0.5;
+    int r = rand() % 7;
+    colors[0] = r & 0b001;
+    colors[1] = r & 0b010;
+    colors[2] = r & 0b100;
+    int r2 = rand() % 7;
+    bg[0] = r2 & 0b001;
+    bg[1] = r2 & 0b010;
+    bg[2] = r2 & 0b100;
+    IOSetBgColor(bg[0] ? 70 : 40, bg[1] ? 70 : 40, bg[2] ? 70 : 40);
 }
 void GameInit() {
-    int mapw = 4, maph = 4;
+    int mapw = 8, maph = 8;
     SetMap(mapw, maph);
     int i, j;
     //for (i = 0; i < 8; i++) {
@@ -132,15 +149,11 @@ void GameInit() {
     //for (i = 0; i < 8; i++) {
     //    SetHWall(1, 8, i);
     //}
-    SetHWall(1, 5, 4);
-    GenerateMaze({ (double)mapw-1,(double)maph-1});
-
     memset(&player, 0, sizeof(Player));
+    fov = 1.57; /* 90 degrees */
     player.movespeed = 0.02;
     player.turnspeed = 0.05;
-    player.pos.x = 0.5;
-    player.pos.y = 0.5;
-    fov = 1.57; /* 90 degrees */
+    NewMaze();
 }
 void Player_Update(Player* p);
 void GameLoop() {

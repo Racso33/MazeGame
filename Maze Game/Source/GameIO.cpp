@@ -26,6 +26,7 @@ int mouseX, mouseY;
 bool mousePressed[3];
 int mouseScroll;
 bool keydown[255];
+int bgcolor[3];
 
 static void RectSetDims(SDL_Rect* r, int x, int y, int w, int h) {
     r->x = x;
@@ -135,7 +136,7 @@ void IOFrame() {
         }
     }
     SDL_RenderPresent(renderer);
-    SDL_SetRenderDrawColor(renderer, 96, 128, 96, 255);
+    SDL_SetRenderDrawColor(renderer, bgcolor[0], bgcolor[1], bgcolor[2], 255);
     SDL_RenderClear(renderer);
 }
 void IODrawImage(const char* imagePath, int x, int y, int w, int h) {
@@ -197,4 +198,9 @@ void IODrawLine(Point p1, Point p2, int thick) {
 }
 bool IOKeyIsDown(int key) {
     return keydown[key];
+}
+void IOSetBgColor(int r, int g, int b) {
+    bgcolor[0] = r;
+    bgcolor[1] = g;
+    bgcolor[2] = b;
 }
