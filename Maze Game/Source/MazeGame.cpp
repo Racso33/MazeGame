@@ -6,6 +6,7 @@ double fov;
 int timer;
 bool colors[3];
 bool bg[3];
+int solved;
 
 int MinimapScale = 10;
 int MinimapWallScale = 1;
@@ -138,6 +139,7 @@ void NewMaze() {
     bg[1] = r2 & 0b010;
     bg[2] = r2 & 0b100;
     IOSetBgColor(bg[0] ? 70 : 40, bg[1] ? 70 : 40, bg[2] ? 70 : 40);
+    solved++;
 }
 void GameInit() {
     int mapw = 8, maph = 8;
@@ -154,6 +156,7 @@ void GameInit() {
     player.movespeed = 0.03;
     player.turnspeed = 0.05;
     NewMaze();
+    solved = 0;
 }
 void Player_Update(Player* p);
 void GameLoop() {
@@ -167,6 +170,9 @@ void GameLoop() {
     /* Draw minimap */
     DrawFirstPerson();
     DrawMinimap();
+    char text[32] = {};
+    sprintf_s(text, "Solved: %d", solved);
+    IODrawText(text, MinimapScale * mapw + 7, 0);
     timer++;
 }
 
