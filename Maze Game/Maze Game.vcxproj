@@ -111,7 +111,7 @@
       <ConformanceMode>true</ConformanceMode>
     </ClCompile>
     <Link>
-      <SubSystem>Console</SubSystem>
+      <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_ttf.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>E:\Programming Libraries\SDL2_ttf-2.22.0\lib\x64;E:\Programming Libraries\SDL2-2.30.1\lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>

@@ -32,3 +32,4 @@ int GetRows();
 double ToAngle(double a);
 
 extern Player player;
+extern int directions[4][2];

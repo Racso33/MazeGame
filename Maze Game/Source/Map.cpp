@@ -66,6 +66,22 @@ Point Shortest(Point p, Point p1, Point p2) {
     if (abs(h1) < abs(h2)) return p1;
     else return p2;
 }
+Point ShortestMargin(Point p, double margin) {
+    bool setres = false;
+    Point res;
+    Point t;
+    for (int i = 0; i < 4; i++) {
+        t = { p.x + margin * directions[i][0],  p.y + margin * directions[i][1] };
+        if (!setres) {
+            res = t;
+            setres = true;
+        }
+        else {
+            res = Shortest(p, t, res);
+        }
+    }
+    return res;
+}
 
 /* Point of impact
    From a point, going to a line */
@@ -95,6 +111,8 @@ Point RaycastEx(Point p, double angle, int maxsteps, bool* error) {
         if(error) *error = true;
         return {};
     }
+    /*p1 = ShortestMargin(p1, 0.1);
+    p2 = ShortestMargin(p2, 0.1);*/
     return Shortest(p, p1, p2);
 }
 Point Raycast(Point p, double angle) {

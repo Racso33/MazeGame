@@ -1,6 +1,5 @@
 #include "MazeGame.h"
 
-extern int directions[4][2];
 Player player;
 double fov;
 int timer;
@@ -162,6 +161,12 @@ void Player_Update(Player* p);
 void GameLoop() {
     int mapw, maph;
     GetMap(&mapw, &maph);
+
+    /* if menu is open do this */
+    /* do click callbacks on hudobjects */
+    /* draw hudobjects */
+
+    /* if menu is open dont do this*/
 
     if (!IOGetMousePressed(2) && IOGetMouseScroll() == -1) fov += 0.1;
     if (!IOGetMousePressed(2) && IOGetMouseScroll() == 1) fov -= 0.1;
