@@ -11,6 +11,7 @@
 
 #include "GameIO.h"
 #include "Map.h"
+#include "ProgramEvents.h"
 
 struct Player {
     Point pos;

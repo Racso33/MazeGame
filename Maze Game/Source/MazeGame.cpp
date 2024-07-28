@@ -140,6 +140,10 @@ void NewMaze() {
     IOSetBgColor(bg[0] ? 70 : 40, bg[1] ? 70 : 40, bg[2] ? 70 : 40);
     solved++;
 }
+void OnHelloWorldEvent(void* p) {
+    player.pos.x = rand() % 8 + 0.5;
+    player.pos.y = rand() % 8 + 0.5;
+}
 void GameInit() {
     int mapw = 8, maph = 8;
     SetMap(mapw, maph);
@@ -156,6 +160,9 @@ void GameInit() {
     player.turnspeed = 0.05;
     NewMaze();
     solved = 0;
+
+    EventHandler* e = EventHandler_RegisterNew(0);
+    EventHandler_RegisterEvent(e, "Hello World", OnHelloWorldEvent);
 }
 void Player_Update(Player* p);
 void GameLoop() {
@@ -178,6 +185,11 @@ void GameLoop() {
     char text[32] = {};
     sprintf_s(text, "Solved: %d", solved);
     IODrawText(text, MinimapScale * mapw + 7, 0);
+
+    if (timer % 50 == 0 && rand() % 5 == 0) {
+        ProgramEvent_Send("Hello World");
+    }
+
     timer++;
 }
 

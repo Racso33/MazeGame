@@ -139,11 +139,13 @@
     <ClCompile Include="Source\MazeGame.cpp" />
     <ClCompile Include="Source\MazeGen.cpp" />
     <ClCompile Include="Source\Player.cpp" />
+    <ClCompile Include="Source\ProgramEvents.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\GameIO.h" />
     <ClInclude Include="Source\Map.h" />
     <ClInclude Include="Source\MazeGame.h" />
+    <ClInclude Include="Source\ProgramEvents.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
