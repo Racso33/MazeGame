@@ -15,7 +15,7 @@ int eventhandlersMem;
 EventHandler* EventHandler_RegisterNew(void* state) {
     if (eventhandlersCount + 1 > eventhandlersMem) {
         eventhandlersMem += 10;
-        eventhandlers = (EventHandler*)realloc(eventhandlers, sizeof(EventHandler*) * eventhandlersMem);
+        eventhandlers = (EventHandler*)realloc(eventhandlers, sizeof(EventHandler) * eventhandlersMem);
         memset(eventhandlers + eventhandlersCount, 0, sizeof(EventHandler) * 10);
     }
     return &eventhandlers[eventhandlersCount++];
@@ -50,4 +50,14 @@ void ProgramEvent_Send(const char* ev) {
     for (int i = 0; i < eventhandlersCount; i++) {
         EventHandler_Send(&eventhandlers[i], ev);
     }
+}
+EventHandler* EventHandler_Copy(EventHandler* t) {
+    EventHandler* res = (EventHandler*)malloc(sizeof(EventHandler));
+    memset(res, 0, sizeof(EventHandler));
+    res->eventsMem = t->eventsMem;
+    res->events = (EventCallback**)malloc(sizeof(EventCallback*) * res->eventsMem);
+    memcpy(res->events, t->events, res->eventsMem);
+    res->eventTypes = (const char**)malloc(sizeof(const char*) * res->eventsMem);
+    memcpy(res->eventTypes, t->eventTypes, res->eventsMem);
+    return res;
 }

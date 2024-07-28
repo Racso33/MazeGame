@@ -145,6 +145,8 @@ void OnHelloWorldEvent(void* p) {
     player.pos.y = rand() % 8 + 0.5;
 }
 void GameInit() {
+    InitButton();
+
     int mapw = 8, maph = 8;
     SetMap(mapw, maph);
     int i, j;
@@ -161,8 +163,7 @@ void GameInit() {
     NewMaze();
     solved = 0;
 
-    EventHandler* e = EventHandler_RegisterNew(0);
-    EventHandler_RegisterEvent(e, "Hello World", OnHelloWorldEvent);
+    InstantiateHudObject("Button");
 }
 void Player_Update(Player* p);
 void GameLoop() {
@@ -189,6 +190,8 @@ void GameLoop() {
     if (timer % 50 == 0 && rand() % 5 == 0) {
         ProgramEvent_Send("Hello World");
     }
+
+    ProgramEvent_Send("DrawHud");
 
     timer++;
 }
