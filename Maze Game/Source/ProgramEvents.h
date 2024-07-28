@@ -12,6 +12,7 @@ struct EventHandler {
 };
 
 EventHandler* EventHandler_RegisterNew(void* state);
+EventHandler* EventHandler_Register(void* state, EventHandler* e);
 void EventHandler_RegisterEvent(EventHandler* t, const char* ev, EventCallback* callback);
 EventHandler* EventHandler_Copy(EventHandler* t);
 void EventHandler_Send(EventHandler* e, const char* ev);

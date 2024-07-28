@@ -193,6 +193,8 @@ void GameLoop() {
         ProgramEvent_Send("Hello World");
     }
 
+    if (IOGetMousePressed(0)) ProgramEvent_Send("Click");
+
     ProgramEvent_Send("DrawHud");
 
     timer++;

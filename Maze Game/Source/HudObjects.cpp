@@ -32,7 +32,7 @@ HudObject* InstantiateHudObject(const char* type) {
     /* copy stuff from tmp */
     memcpy_s(result, result->size, tmp, tmp->size);
     result->evhandler = EventHandler_Copy(tmp->evhandler);
-    result->evhandler->state = result;
+    EventHandler_Register(result, result->evhandler);
     if (hudobjectsCount + 1 > hudobjectsMem) {
         hudobjectsMem += 10;
         hudobjects = (HudObject**)realloc(hudobjects, sizeof(HudObject*) * hudobjectsMem);
