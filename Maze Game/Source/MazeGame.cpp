@@ -163,7 +163,9 @@ void GameInit() {
     NewMaze();
     solved = 0;
 
-    InstantiateHudObject("Button");
+    Button* b = (Button*)InstantiateHudObject("Button");
+    HudObject_SetPosition((HudObject*)b, 0, 0, 50, 30);
+    b->label = "Bogos Binted";
 }
 void Player_Update(Player* p);
 void GameLoop() {
