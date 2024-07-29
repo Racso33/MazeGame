@@ -13,6 +13,7 @@
 #include "Map.h"
 #include "ProgramEvents.h"
 #include "HudObjects.h"
+#include "SettingsMenu.h"
 
 struct Player {
     Point pos;
@@ -32,6 +33,7 @@ void GenerateMaze(Point origin);
 int GetColumns();
 int GetRows();
 double ToAngle(double a);
+double AngleDiff(double n1, double n2);
 
 extern Player player;
 extern int directions[4][2];

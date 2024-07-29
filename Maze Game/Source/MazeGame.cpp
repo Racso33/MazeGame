@@ -6,6 +6,7 @@ int timer;
 bool colors[3];
 bool bg[3];
 int solved;
+bool menu;
 
 int MinimapScale = 10;
 int MinimapWallScale = 1;
@@ -51,6 +52,23 @@ double ToAngle(double i) {
         r = M_PI * 2 + r;
     }
     return r;
+}
+double InvertAngle(double n) {
+    return ToAngle(n * -1);
+}
+double AngleDiff(double n1, double n2) {
+    /* n1, n2. Convert to angle. 
+       Compare from angles when inverted and not
+       get the lowest. 
+
+       abs(n1 - n2)
+       abs(n1 - invn2)
+
+       Should the dif be negative? 
+    */
+    double def = ToAngle(n1) - ToAngle(n2);
+    double inv = ToAngle(n1) - InvertAngle(n2);
+    return abs(def) < abs(inv) ? def : inv;
 }
 double AngAngDirTurn(double playerang, double nplayerang) {
     return -1;
@@ -146,6 +164,7 @@ void OnHelloWorldEvent(void* p) {
 }
 void GameInit() {
     InitButton();
+    SettingsMenu_Init();
 
     int mapw = 8, maph = 8;
     SetMap(mapw, maph);
@@ -162,40 +181,47 @@ void GameInit() {
     player.turnspeed = 0.05;
     NewMaze();
     solved = 0;
-
-    Button* b = (Button*)InstantiateHudObject("Button");
-    HudObject_SetPosition((HudObject*)b, 0, 0, 50, 30);
-    b->label = "Bogos Binted";
 }
 void Player_Update(Player* p);
 void GameLoop() {
+    //HudObject* a = (HudObject*)InstantiateHudObject("Button");
+    //HudObject_SetPosition(a, 0, 0, 250, 150);
+    //((Button*)a)->label = "hi";
+    //((Button*)a)->callback = 0;
+
+    //HudObjects_Draw();
+    //return;
+
     int mapw, maph;
+    int mx, my;
     GetMap(&mapw, &maph);
+    IOGetMousePos(&mx, &my);
 
-    /* if menu is open do this */
-    /* do click callbacks on hudobjects */
-    /* draw hudobjects */
+    if (!menu) {
+        if (IOGetMousePressed(2)) {
+            SettingsMenu* s = (SettingsMenu*)InstantiateHudObject("SettingsMenu");
+            HudObject_SetPosition((HudObject*)s, mx,my, 400, 500);
+            menu = true;
+        }
+        Player_Update(&player);
 
-    /* if menu is open dont do this*/
-
-    if (!IOGetMousePressed(2) && IOGetMouseScroll() == -1) fov += 0.1;
-    if (!IOGetMousePressed(2) && IOGetMouseScroll() == 1) fov -= 0.1;
-    Player_Update(&player);
-
-    /* Draw minimap */
-    DrawFirstPerson();
-    DrawMinimap();
-    char text[32] = {};
-    sprintf_s(text, "Solved: %d", solved);
-    IODrawText(text, MinimapScale * mapw + 7, 0);
-
-    if (timer % 50 == 0 && rand() % 5 == 0) {
-        ProgramEvent_Send("Hello World");
+        /*Draw minimap */
+        DrawFirstPerson();
+        DrawMinimap();
+        char text[32] = {};
+        sprintf_s(text, "Solved: %d", solved);
+        IODrawText(text, MinimapScale * mapw + 7, 0);
     }
+    else {
+        DrawFirstPerson();
+        DrawMinimap();
+        HudObjects_Update();
+        HudObjects_Draw();
 
-    if (IOGetMousePressed(0)) ProgramEvent_Send("Click");
-
-    ProgramEvent_Send("DrawHud");
+        if (IOGetMousePressed(2)) {
+            menu = false;
+        }
+    }
 
     timer++;
 }

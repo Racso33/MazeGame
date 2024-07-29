@@ -8,13 +8,14 @@
    */
 
 /* global eventhandlers here */
-EventHandler* eventhandlers;
-int eventhandlersCount;
-int eventhandlersMem;
+EventHandler* eventhandlers = 0;
+int eventhandlersCount = 0;
+int eventhandlersMem = 0;
 
 EventHandler* EventHandler_RegisterNew(void* state) {
     if (eventhandlersCount + 1 > eventhandlersMem) {
         eventhandlersMem += 10;
+        //eventhandlers = (EventHandler*)realloc(eventhandlers, sizeof(EventHandler) * eventhandlersMem);
         eventhandlers = (EventHandler*)realloc(eventhandlers, sizeof(EventHandler) * eventhandlersMem);
         memset(eventhandlers + eventhandlersCount, 0, sizeof(EventHandler) * 10);
     }
@@ -25,13 +26,16 @@ EventHandler* EventHandler_Register(void* state, EventHandler* e) {
     if (eventhandlersCount + 1 > eventhandlersMem) {
         eventhandlersMem += 10;
         eventhandlers = (EventHandler*)realloc(eventhandlers, sizeof(EventHandler) * eventhandlersMem);
+        //eventhandlers = (EventHandler*)malloc(sizeof(EventHandler) * eventhandlersMem);
         memset(eventhandlers + eventhandlersCount, 0, sizeof(EventHandler) * 10);
     }
+    //memset(eventhandlers + eventhandlersCount, 0, sizeof(EventHandler));
+    //memcpy(&eventhandlers[eventhandlersCount], e, sizeof(EventHandler));
     eventhandlers[eventhandlersCount] = *e;
     eventhandlers[eventhandlersCount].state = state;
     return &eventhandlers[eventhandlersCount++];
 }
-void EventHandler_RegisterEvent(EventHandler* t, const char* ev, EventCallback callback) {
+void EventHandler_RegisterEvent(EventHandler* t, const char* ev, EventCallback* callback) {
     if (t->eventsCount + 1 > t->eventsMem) {
         t->eventsMem += 10;
         t->events = (EventCallback**)realloc(t->events, sizeof(EventCallback*) * t->eventsMem);
@@ -62,14 +66,22 @@ void ProgramEvent_Send(const char* ev) {
         EventHandler_Send(&eventhandlers[i], ev);
     }
 }
-EventHandler* EventHandler_Copy(EventHandler* t) {
-    EventHandler* res = (EventHandler*)malloc(sizeof(EventHandler));
-    memset(res, 0, sizeof(EventHandler));
-    res->eventsMem = t->eventsMem;
-    res->events = (EventCallback**)malloc(sizeof(EventCallback*) * res->eventsMem);
-    memcpy(res->events, t->events, res->eventsMem * sizeof(EventCallback*));
-    res->eventTypes = (const char**)malloc(sizeof(const char*) * res->eventsMem);
-    memcpy(res->eventTypes, t->eventTypes, res->eventsMem * sizeof(const char*));
-    res->eventsCount = t->eventsCount;
-    return res;
+EventHandler* EventHandler_Copy(EventHandler* src, EventHandler* target) {
+    src->eventsMem = target->eventsMem;
+    src->events = (EventCallback**)malloc(sizeof(EventCallback*) * src->eventsMem);
+    memcpy(src->events, target->events, target->eventsMem* sizeof(EventCallback*));
+    src->eventTypes = (const char**)malloc(sizeof(const char*) * src->eventsMem);
+    memcpy(src->eventTypes, target->eventTypes, target->eventsMem * sizeof(const char*));
+    src->eventsCount = target->eventsCount;
+}
+EventHandler* EventHandler_Get(int i) {
+    return i < eventhandlersCount ? &eventhandlers[i] : 0;
+}
+int EventHandler_GetIdx(EventHandler* ev) {
+    for (int i = 0; i < eventhandlersCount; i++) {
+        if (&eventhandlers[i] == ev) {
+            return i;
+        }
+    }
+    return -1;
 }

@@ -1,3 +1,5 @@
+#include "stdio.h"
+#include "stdlib.h"
 #include <string.h>
 #include <SDL.h>
 #include <SDL_ttf.h>
@@ -58,7 +60,11 @@ void IOInit() {
     windowId = SDL_GetWindowID(window);
     renderer = SDL_CreateRenderer(window, -1, 0);
     TTF_Init();
-    font = TTF_OpenFont("E:\\Programming Libraries\\Roboto\\Roboto-Medium.ttf", 24);
+    font = TTF_OpenFont("C:\\Windows\\Fonts\\segoeuib.ttf", 18);
+    if (!font) {
+        fprintf(stderr, "Font couldnt be loaded\n"); 
+        exit(1);
+    }
 }
 bool IOShouldClose() {
     return quit;
