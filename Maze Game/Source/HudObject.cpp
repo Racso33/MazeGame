@@ -96,8 +96,10 @@ void DrawHudObjects() {
 void ButtonInit();
 void SettingsMenuInit();
 void TextBoxInit();
+void LabelInit();
 void HudInit() {
     ButtonInit();
     SettingsMenuInit();
     TextBoxInit();
+    LabelInit();
 }

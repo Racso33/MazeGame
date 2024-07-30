@@ -8,6 +8,7 @@ bool bg[3];
 int solved;
 bool menu;
 HudObjRef settingsmenu;
+double wallheight;
 
 int MinimapScale = 10;
 int MinimapWallScale = 1;
@@ -129,7 +130,7 @@ void DrawFirstPerson() {
         bool colhit = false;
         if (p2.x - trunc(p2.x)) colhit = true;
         double h = hypot(p2.x - player.pos.x, p2.y - player.pos.y) * cos(rang - player.ang);
-        double lh = (sheight/3) / h;
+        double lh = (sheight/wallheight) / h;
         double lw = (double)swidth / raycount;
         int r = colors[0] ? 230 : 170;
         if (colhit) r *= 0.7;
@@ -181,6 +182,7 @@ void GameInit() {
     fov = 1.57; /* 90 degrees */
     player.movespeed = 0.03;
     player.turnspeed = 0.05;
+    wallheight = 3;
     NewMaze();
     solved = 0;
 }
@@ -195,6 +197,7 @@ void GameLoop() {
         if (IOMousePressed(2)) {
             SettingsMenu* b = (SettingsMenu*)GetHudObj(settingsmenu);
             HudObjSetPosition((HudObj*)b, mx, my, 250, 150);
+            SettingsMenuLoadFields(b);
 
             menu = true;
         }

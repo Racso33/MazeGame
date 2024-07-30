@@ -149,6 +149,7 @@
     <ClInclude Include="Source\GameIO.h" />
     <ClInclude Include="Source\HudObject.h" />
     <ClInclude Include="Source\HudObjects\Button.h" />
+    <ClInclude Include="Source\HudObjects\Label.h" />
     <ClInclude Include="Source\HudObjects\SettingsMenu.h" />
     <ClInclude Include="Source\HudObjects\TextBox.h" />
     <ClInclude Include="Source\Map.h" />

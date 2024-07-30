@@ -2,7 +2,7 @@
 
 static void OnCreate(HudObj* o) {
     HudObjTextBox* s = (HudObjTextBox*)o;
-    memset(s->buffer, 0, 255);
+    memset(s->buffer, 0, 256);
 }
 static void OnDraw(HudObj* o) {
     HudObjTextBox* s = (HudObjTextBox*)o;

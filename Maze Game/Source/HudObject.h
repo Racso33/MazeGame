@@ -16,9 +16,9 @@ enum HudObjEvent {
 #define HudObjEventCount 8
 typedef void (HudObjEventProc)(HudObj* st);
 enum HudObjType {
-    HudObjTypeButton, HudObjTypeSettingsMenu, HudObjTypeTextBox
+    HudObjTypeButton, HudObjTypeSettingsMenu, HudObjTypeTextBox, HudObjTypeLabel
 };
-#define HudObjTypesCount 3
+#define HudObjTypesCount 4
 struct HudObj {
     HudObjType type;
     HudObjEventProc* evprocs[HudObjEventCount];
@@ -52,3 +52,4 @@ void HudInit();
 #include "HudObjects\Button.h"
 #include "HudObjects\SettingsMenu.h"
 #include "HudObjects\TextBox.h"
+#include "HudObjects\Label.h"

@@ -37,3 +37,4 @@ extern Player player;
 extern int directions[4][2];
 extern double fov;
 extern HudObjRef settingsmenu;
+extern double wallheight;
