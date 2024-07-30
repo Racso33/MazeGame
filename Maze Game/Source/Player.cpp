@@ -39,18 +39,9 @@ void Player_Update(Player* p) {
     if (!p->hasTarget && p->movecooldown < 0) {
         Player_PickDirection(p);
     }
-    /* smoothly move angle to what it should be.
-       Should setting angles always be smooth?
-       Maybe not.
-       Smooth angle
-       Raw angle
-       If I wanted to extend this to have like mouse look.
-       I would disable/enable smooth look.
-       Or like, if state is NavigatingMaze, then smooth look.
-       For now though, I can just always have smooth look.
-    */
+
     if (abs(abs(p->tang) - abs(p->ang)) - 0.04 >= 0) {
-        /* angle difference, turnspeed with difference */
+        /* This is broken */
         //double a = ToAngle(p->tang - p->ang) - M_PI;
         //double m = abs(a / (ToAngle(p->ang) - M_PI)) * 0.1;
         //double turn = p->turnspeed * m;

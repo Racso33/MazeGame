@@ -9,11 +9,5 @@ void SetHWall(int val, int row, int x);
 void SetMap(int hcells, int vcells);
 void GetMap(int* hcells, int* vcells);
 
-/* Raycast but only a certain distance. 
-   Or only a certain amount of times. 
-
-   Walk x ammount.
-*/
-
 bool Intersection(Point p1, Point p2);
 Point Raycast(Point p, double angle);

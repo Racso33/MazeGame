@@ -32,14 +32,9 @@ void GetMap(int* hcells, int* vcells) {
 }
 
 Point StepColumn(Point p, double angle) {
-    /* how much to move for next column */
-
-    /* return p + ammount to move, p + (move * tangent) */
-
     double r = tan(angle);
     double cp = p.x - trunc(p.x);
     double nc = 1;
-    int ys;
     if (angle < M_PI / 2 || (angle <= M_PI*2 && angle > M_PI + M_PI / 2)) nc = 1;
     else if (cp == 0) nc = -1;
     else nc = 0;
@@ -52,7 +47,6 @@ Point StepRow(Point p, double angle) {
     double r = 1 / (t != 0 ? t : -0.00001);
     double cp = p.y - trunc(p.y);
     double nc = 1;
-    int xs;
     if (angle >= 0 && angle < M_PI) nc = 1;
     else if(cp == 0) nc = -1;
     else nc = 0;
@@ -83,36 +77,26 @@ Point ShortestMargin(Point p, double margin) {
     return res;
 }
 
-/* Point of impact
-   From a point, going to a line */
 Point RaycastEx(Point p, double angle, int maxsteps, bool* error) {
     /* Possible bug: 
         Rounding errors 
     */
-    /* step along cols and rows. If a wall is there, return. */
     Point p1 = p, p2 = p;
     int w1 = 0, w2 = 0;
     int steps = -1;
     while((!w1 || !w2) && (maxsteps == -1 || steps < maxsteps)) {
         if(!w1) p1 = StepColumn(p1, angle);
         if(!w2) p2 = StepRow(p2, angle);
-        /* pick shortest one */
+
         w1 = GetVWall(p1.x, p1.y);
         w2 = GetHWall(p2.y, p2.x);
-        /* if p is on wall: return
-           A system where you can use a point to get a wall.
-           Or, more  so, translate point into a wall index
-           Horizontal Wall index = Row, x
-           Vertical Wall index = Col, y
-        */
+
         steps++;
     }
     if (maxsteps != -1 && steps >= maxsteps) {
         if(error) *error = true;
         return {};
     }
-    /*p1 = ShortestMargin(p1, 0.1);
-    p2 = ShortestMargin(p2, 0.1);*/
     return Shortest(p, p1, p2);
 }
 Point Raycast(Point p, double angle) {

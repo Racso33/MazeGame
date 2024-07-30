@@ -59,14 +59,9 @@ double InvertAngle(double n) {
     return ToAngle(n * -1);
 }
 double AngleDiff(double n1, double n2) {
-    /* n1, n2. Convert to angle. 
-       Compare from angles when inverted and not
-       get the lowest. 
-
-       abs(n1 - n2)
-       abs(n1 - invn2)
-
-       Should the dif be negative? 
+    /* i need to get angles in two different coordinates.
+       One where 0 is on left, and the other on right.
+       Now, how do I convert that?
     */
     double def = ToAngle(n1) - ToAngle(n2);
     double inv = ToAngle(n1) - InvertAngle(n2);
@@ -130,7 +125,7 @@ void DrawFirstPerson() {
         bool colhit = false;
         if (p2.x - trunc(p2.x)) colhit = true;
         double h = hypot(p2.x - player.pos.x, p2.y - player.pos.y) * cos(rang - player.ang);
-        double lh = (sheight/wallheight) / h;
+        double lh = sheight/ h * wallheight + 0.01;
         double lw = (double)swidth / raycount;
         int r = colors[0] ? 230 : 170;
         if (colhit) r *= 0.7;
@@ -182,7 +177,7 @@ void GameInit() {
     fov = 1.57; /* 90 degrees */
     player.movespeed = 0.03;
     player.turnspeed = 0.05;
-    wallheight = 3;
+    wallheight = 0.5;
     NewMaze();
     solved = 0;
 }
@@ -190,13 +185,15 @@ void Player_Update(Player* p);
 void GameLoop() {
     int mapw, maph;
     int mx, my;
+    int swidth, sheight;
     GetMap(&mapw, &maph);
     IOGetMousePos(&mx, &my);
+    IOGetWindowDims(&swidth, &sheight);
 
     if (!menu) {
         if (IOMousePressed(2)) {
             SettingsMenu* b = (SettingsMenu*)GetHudObj(settingsmenu);
-            HudObjSetPosition((HudObj*)b, mx, my, 250, 150);
+            HudObjSetPosition((HudObj*)b, fmin(mx, swidth-250), fmin(my, sheight - 150), 250, 150);
             SettingsMenuLoadFields(b);
 
             menu = true;
@@ -222,6 +219,9 @@ void GameLoop() {
         if (IOMousePressed(2)) {
             menu = false;
         }
+    }
+    if (timer < 200) {
+        IODrawText("Press Right Mouse Button for Settings", swidth - 340, sheight - 36);
     }
 
     timer++;
