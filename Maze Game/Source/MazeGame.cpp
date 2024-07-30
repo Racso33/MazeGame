@@ -167,11 +167,8 @@ void GameInit() {
     SetMap(mapw, maph);
 
     HudInit();
-
-    HudObjRef a = InstantiateHudObj(HudObjTypeButton);
-    HudObjButton* b = (HudObjButton*)GetHudObj(a);
+    SettingsMenu* b = (SettingsMenu*)GetHudObj(InstantiateHudObj(HudObjTypeSettingsMenu));
     HudObjSetPosition((HudObj*)b, 30, 30, 250, 150);
-    HudObjButtonSet(b, 0, "hi");
 
     int i, j;
     //for (i = 0; i < 8; i++) {
@@ -189,14 +186,6 @@ void GameInit() {
 }
 void Player_Update(Player* p);
 void GameLoop() {
-    //HudObject* a = (HudObject*)InstantiateHudObject("Button");
-    //HudObject_SetPosition(a, 0, 0, 250, 150);
-    //((Button*)a)->label = "hi";
-    //((Button*)a)->callback = 0;
-
-    //HudObjects_Draw();
-    //return;
-
     int mapw, maph;
     int mx, my;
     GetMap(&mapw, &maph);

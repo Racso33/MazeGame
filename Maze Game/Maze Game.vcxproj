@@ -137,6 +137,9 @@
     <ClCompile Include="Source\GameIO.cpp" />
     <ClCompile Include="Source\HudObject.cpp" />
     <ClCompile Include="Source\HudObjects\Button.cpp" />
+    <ClCompile Include="Source\HudObjects\Label.cpp" />
+    <ClCompile Include="Source\HudObjects\SettingsMenu.cpp" />
+    <ClCompile Include="Source\HudObjects\TextBox.cpp" />
     <ClCompile Include="Source\Map.cpp" />
     <ClCompile Include="Source\MazeGame.cpp" />
     <ClCompile Include="Source\MazeGen.cpp" />
@@ -146,6 +149,8 @@
     <ClInclude Include="Source\GameIO.h" />
     <ClInclude Include="Source\HudObject.h" />
     <ClInclude Include="Source\HudObjects\Button.h" />
+    <ClInclude Include="Source\HudObjects\SettingsMenu.h" />
+    <ClInclude Include="Source\HudObjects\TextBox.h" />
     <ClInclude Include="Source\Map.h" />
     <ClInclude Include="Source\MazeGame.h" />
   </ItemGroup>

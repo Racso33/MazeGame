@@ -38,14 +38,19 @@ HudObjRef InstantiateHudObj(HudObjType type) {
     }
     HudObj* res = (HudObj*)malloc(objclass->size);
     memcpy(res, objclass, objclass->size);
-    hudobjects[hudobjectsCount] = res;
-    return { hudobjectsCount++, HudObjRef::HudObjInstance };
+    int ind = hudobjectsCount++;
+    hudobjects[ind] = res;
+    HudObjEventProc* cproc = res->evprocs[HudObjEventCreate];
+    if (cproc) cproc(res);
+    return { ind, HudObjRef::HudObjInstance };
 }
 void HudObjSetPosition(HudObj* o, int x, int y, int w, int h) {
     o->x = x;
     o->y = y;
     o->w = w;
     o->h = h;
+    HudObjEventProc* proc = o->evprocs[HudObjEventResize];
+    if (proc) proc(o);
 }
 bool RectOverlap(int x, int y, Rect r) {
     return x >= r.x && x <= r.x + r.w
@@ -62,10 +67,20 @@ void UpdateHudObjects() {
         if (RectOverlap(mx, my, objr)) {
             hov = obj;
         }
+        if (obj->hasFocus) {
+            if (IOKeyIsDown(SDLK_a)) {
+                HudObjEventProc* proc = obj->evprocs[HudObjEventKeyboard];
+                if (proc) proc(obj);
+            }
+        }
     }
     if (hov) {
         hov->isHovered = true;
         if (IOGetMousePressed(0)) {
+            for (int i = 0; i < hudobjectsCount; i++) {
+                hudobjects[i]->hasFocus = false;
+            }
+            hov->hasFocus = true;
             HudObjEventProc* proc = hov->evprocs[HudObjEventClick];
             if (proc) proc(hov);
         }
@@ -79,6 +94,10 @@ void DrawHudObjects() {
     }
 }
 void ButtonInit();
+void SettingsMenuInit();
+void TextBoxInit();
 void HudInit() {
     ButtonInit();
+    SettingsMenuInit();
+    TextBoxInit();
 }

@@ -10,21 +10,23 @@
 
 struct HudObj;
 enum HudObjEvent {
-    HudObjEventCreate, HudObjEventDestroy, HudObjEventFrame, HudObjEventDraw, HudObjEventClick, HudObjEventHover, HudObjEventResize
+    HudObjEventCreate, HudObjEventDestroy, HudObjEventFrame, HudObjEventDraw, HudObjEventClick, HudObjEventHover, HudObjEventResize,
+    HudObjEventKeyboard
 };
-#define HudObjEventCount 7
+#define HudObjEventCount 8
 typedef void (HudObjEventProc)(HudObj* st);
 enum HudObjType {
-    HudObjTypeButton
+    HudObjTypeButton, HudObjTypeSettingsMenu, HudObjTypeTextBox
 };
+#define HudObjTypesCount 3
 struct HudObj {
     HudObjType type;
     HudObjEventProc* evprocs[HudObjEventCount];
     int x, y, w, h;
     bool isHovered;
+    bool hasFocus;
     int size;
 };
-#define HudObjTypesCount 1
 
 struct HudObjRef {
     /* a object that is used to reference hudobjects, because otherwise, dangling pointers
@@ -47,3 +49,5 @@ void HudObjSetPosition(HudObj* o, int x, int y, int w, int h);
 void HudInit();
 
 #include "HudObjects\Button.h"
+#include "HudObjects\SettingsMenu.h"
+#include "HudObjects\TextBox.h"

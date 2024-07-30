@@ -76,6 +76,7 @@ void IODrawText(const char* text, int x, int y) {
     SDL_Rect re = { x, y, 0, 0 };
 
     s = TTF_RenderText_Solid(font, text, c);
+    if (!s) return;
     re.w = s->w;
     re.h = s->h;
     t = SDL_CreateTextureFromSurface(renderer, s);
