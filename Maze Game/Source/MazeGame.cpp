@@ -163,11 +163,16 @@ void OnHelloWorldEvent(void* p) {
     player.pos.y = rand() % 8 + 0.5;
 }
 void GameInit() {
-    InitButton();
-    SettingsMenu_Init();
-
     int mapw = 8, maph = 8;
     SetMap(mapw, maph);
+
+    HudInit();
+
+    HudObjRef a = InstantiateHudObj(HudObjTypeButton);
+    HudObjButton* b = (HudObjButton*)GetHudObj(a);
+    HudObjSetPosition((HudObj*)b, 30, 30, 250, 150);
+    HudObjButtonSet(b, 0, "hi");
+
     int i, j;
     //for (i = 0; i < 8; i++) {
     //    SetVWall(1, 8, i);
@@ -198,9 +203,8 @@ void GameLoop() {
     IOGetMousePos(&mx, &my);
 
     if (!menu) {
-        if (IOGetMousePressed(2)) {
-            SettingsMenu* s = (SettingsMenu*)InstantiateHudObject("SettingsMenu");
-            HudObject_SetPosition((HudObject*)s, mx,my, 400, 500);
+        if (IOGetMousePressed(2) && timer % 25 == 0) {
+
             menu = true;
         }
         Player_Update(&player);
@@ -215,10 +219,10 @@ void GameLoop() {
     else {
         DrawFirstPerson();
         DrawMinimap();
-        HudObjects_Update();
-        HudObjects_Draw();
+        UpdateHudObjects();
+        DrawHudObjects();
 
-        if (IOGetMousePressed(2)) {
+        if (IOGetMousePressed(2) && timer % 25 == 0) {
             menu = false;
         }
     }

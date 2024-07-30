@@ -134,23 +134,20 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Source\Button.cpp" />
     <ClCompile Include="Source\GameIO.cpp" />
-    <ClCompile Include="Source\HudObjects.cpp" />
+    <ClCompile Include="Source\HudObject.cpp" />
+    <ClCompile Include="Source\HudObjects\Button.cpp" />
     <ClCompile Include="Source\Map.cpp" />
     <ClCompile Include="Source\MazeGame.cpp" />
     <ClCompile Include="Source\MazeGen.cpp" />
     <ClCompile Include="Source\Player.cpp" />
-    <ClCompile Include="Source\ProgramEvents.cpp" />
-    <ClCompile Include="Source\SettingsMenu.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\GameIO.h" />
-    <ClInclude Include="Source\HudObjects.h" />
+    <ClInclude Include="Source\HudObject.h" />
+    <ClInclude Include="Source\HudObjects\Button.h" />
     <ClInclude Include="Source\Map.h" />
     <ClInclude Include="Source\MazeGame.h" />
-    <ClInclude Include="Source\ProgramEvents.h" />
-    <ClInclude Include="Source\SettingsMenu.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
