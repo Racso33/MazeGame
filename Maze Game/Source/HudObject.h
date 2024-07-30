@@ -25,6 +25,7 @@ struct HudObj {
     int x, y, w, h;
     bool isHovered;
     bool hasFocus;
+    bool isHidden;
     int size;
 };
 

@@ -29,6 +29,8 @@ bool mousePressed[3];
 int mouseScroll;
 bool keydown[255];
 int bgcolor[3];
+int keypressed;
+bool mousePressed2[5];
 
 static void RectSetDims(SDL_Rect* r, int x, int y, int w, int h) {
     r->x = x;
@@ -88,11 +90,11 @@ void IODrawText(const char* text, int x, int y) {
 void IOFrame() {
     SDL_Event ev;
     int i;
-
-    /*for (i = 0; i < 3; i++) {
-        mousePressed[i] = false;
-    }*/
+    for (i = 0; i < 5; i++) {
+        mousePressed2[i] = false;
+    }
     mouseScroll = 0;
+    keypressed = 0;
     while (SDL_PollEvent(&ev)) {
         switch (ev.type) {
         case SDL_QUIT:
@@ -123,6 +125,7 @@ void IOFrame() {
             break;
 
         case SDL_MOUSEBUTTONDOWN:
+            mousePressed2[ev.button.button - 1] = true;
             mousePressed[ev.button.button - 1] = true;
             break;
         case SDL_MOUSEBUTTONUP:
@@ -130,6 +133,7 @@ void IOFrame() {
             break;
 
         case SDL_KEYDOWN:
+            keypressed = ev.key.keysym.sym;
             if(ev.key.keysym.sym >= 0 && ev.key.keysym.sym < 255)
                 keydown[ev.key.keysym.sym] = true;
             break;
@@ -210,4 +214,10 @@ void IOSetBgColor(int r, int g, int b) {
     bgcolor[0] = r;
     bgcolor[1] = g;
     bgcolor[2] = b;
+}
+char IOGetCharPressed() {
+    return keypressed;
+}
+bool IOMousePressed(int button) {
+    return mousePressed2[button];
 }

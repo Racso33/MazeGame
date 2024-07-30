@@ -35,3 +35,5 @@ double AngleDiff(double n1, double n2);
 
 extern Player player;
 extern int directions[4][2];
+extern double fov;
+extern HudObjRef settingsmenu;

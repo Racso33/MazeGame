@@ -7,7 +7,7 @@ static void OnDraw(HudObj* o) {
 }
 static void OnClick(HudObj* o) {
     HudObjButton* b = (HudObjButton*)o;
-    IODrawRect(0,0, 640, 480, 255, 255, 255);
+    if (b->clickcallback) b->clickcallback(b);
 }
 
 void ButtonInit() {

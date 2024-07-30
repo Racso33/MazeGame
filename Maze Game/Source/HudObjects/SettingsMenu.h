@@ -6,4 +6,5 @@ struct SettingsMenu {
     HudObj base;
     HudObjRef applybutton;
     HudObjRef fovtext;
+    HudObjRef nextbutton;
 };

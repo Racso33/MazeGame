@@ -2,20 +2,34 @@
 
 /* draw background, reposition button when resized */
 
+static void ApplyButton(HudObjButton* b) {
+    SettingsMenu* s = (SettingsMenu*)GetHudObj(settingsmenu);
+    HudObjTextBox* fovbox = (HudObjTextBox*)GetHudObj(s->fovtext);
+    fov = atof(fovbox->buffer);
+}
+static void NextButton(HudObjButton* b) {
+    SettingsMenu* s = (SettingsMenu*)GetHudObj(settingsmenu);
+    NewMaze();
+}
+
+
 static void OnCreate(HudObj* o) {
     SettingsMenu* s = (SettingsMenu*)o;
     s->applybutton = InstantiateHudObj(HudObjTypeButton);
-    HudObjButtonSet((HudObjButton*)GetHudObj(s->applybutton), 0, "Apply");
+    HudObjButtonSet((HudObjButton*)GetHudObj(s->applybutton), ApplyButton, "Apply");
     s->fovtext = InstantiateHudObj(HudObjTypeTextBox);
-    sprintf_s(((HudObjTextBox*)GetHudObj(s->fovtext))->buffer, "Hi");
+    s->nextbutton = InstantiateHudObj(HudObjTypeButton);
+    HudObjButtonSet((HudObjButton*)GetHudObj(s->nextbutton), NextButton, "Go Next");
 }
 static void OnResize(HudObj* o) {
     SettingsMenu* s = (SettingsMenu*)o;
     HudObjButton* b = (HudObjButton*)GetHudObj(s->applybutton);
+    HudObjButton* b2 = (HudObjButton*)GetHudObj(s->nextbutton);
     HudObjTextBox* fov = (HudObjTextBox*)GetHudObj(s->fovtext);
     
-    int bw = 50, bh = 30;
+    int bw = 100, bh = 30;
     HudObjSetPosition((HudObj*)b, s->base.x + s->base.w - (bw + 5), s->base.y + s->base.h - (bh + 5), bw, bh);
+    HudObjSetPosition((HudObj*)b2, s->base.x + s->base.w - (bw + 5)*2, s->base.y + s->base.h - (bh + 5), bw, bh);
 
     HudObjSetPosition((HudObj*)fov, s->base.x+1, s->base.y+1, s->base.w-2, 50);
 

@@ -2,6 +2,7 @@
 
 static void OnCreate(HudObj* o) {
     HudObjTextBox* s = (HudObjTextBox*)o;
+    memset(s->buffer, 0, 255);
 }
 static void OnDraw(HudObj* o) {
     HudObjTextBox* s = (HudObjTextBox*)o;
@@ -12,9 +13,16 @@ static void OnDraw(HudObj* o) {
     );
     IODrawText(s->buffer, s->base.x, s->base.y);
 }
+static void OnClick(HudObj* o) {
+    HudObjTextBox* s = (HudObjTextBox*)o;
+    memset(s->buffer, 0, 255);
+    s->bufferCount = 0;
+    s->cursor = 0;
+}
 static void OnKeyboard(HudObj* o) {
     HudObjTextBox* s = (HudObjTextBox*)o;
-    s->buffer[s->cursor++] = 'a';
+    s->buffer[s->cursor++] = IOGetCharPressed();
+    s->bufferCount++;
 }
 
 void TextBoxInit() {
@@ -22,4 +30,5 @@ void TextBoxInit() {
     HudObjRegEvent((HudObj*)s, HudObjEventCreate, OnCreate);
     HudObjRegEvent((HudObj*)s, HudObjEventDraw, OnDraw);
     HudObjRegEvent((HudObj*)s, HudObjEventKeyboard, OnKeyboard);
+    HudObjRegEvent((HudObj*)s, HudObjEventClick, OnClick);
 }

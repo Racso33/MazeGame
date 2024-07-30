@@ -68,7 +68,7 @@ void UpdateHudObjects() {
             hov = obj;
         }
         if (obj->hasFocus) {
-            if (IOKeyIsDown(SDLK_a)) {
+            if (IOGetCharPressed() != 0) {
                 HudObjEventProc* proc = obj->evprocs[HudObjEventKeyboard];
                 if (proc) proc(obj);
             }
@@ -76,7 +76,7 @@ void UpdateHudObjects() {
     }
     if (hov) {
         hov->isHovered = true;
-        if (IOGetMousePressed(0)) {
+        if (IOMousePressed(0)) {
             for (int i = 0; i < hudobjectsCount; i++) {
                 hudobjects[i]->hasFocus = false;
             }

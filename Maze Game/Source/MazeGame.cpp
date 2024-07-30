@@ -7,6 +7,7 @@ bool colors[3];
 bool bg[3];
 int solved;
 bool menu;
+HudObjRef settingsmenu;
 
 int MinimapScale = 10;
 int MinimapWallScale = 1;
@@ -167,9 +168,8 @@ void GameInit() {
     SetMap(mapw, maph);
 
     HudInit();
-    SettingsMenu* b = (SettingsMenu*)GetHudObj(InstantiateHudObj(HudObjTypeSettingsMenu));
-    HudObjSetPosition((HudObj*)b, 30, 30, 250, 150);
-
+    settingsmenu = InstantiateHudObj(HudObjTypeSettingsMenu);
+    SettingsMenu* b = (SettingsMenu*)GetHudObj(settingsmenu);
     int i, j;
     //for (i = 0; i < 8; i++) {
     //    SetVWall(1, 8, i);
@@ -192,7 +192,9 @@ void GameLoop() {
     IOGetMousePos(&mx, &my);
 
     if (!menu) {
-        if (IOGetMousePressed(2) && timer % 25 == 0) {
+        if (IOMousePressed(2)) {
+            SettingsMenu* b = (SettingsMenu*)GetHudObj(settingsmenu);
+            HudObjSetPosition((HudObj*)b, mx, my, 250, 150);
 
             menu = true;
         }
@@ -208,10 +210,13 @@ void GameLoop() {
     else {
         DrawFirstPerson();
         DrawMinimap();
+        char text[32] = {};
+        sprintf_s(text, "Solved: %d", solved);
+        IODrawText(text, MinimapScale * mapw + 7, 0);
         UpdateHudObjects();
         DrawHudObjects();
 
-        if (IOGetMousePressed(2) && timer % 25 == 0) {
+        if (IOMousePressed(2)) {
             menu = false;
         }
     }
