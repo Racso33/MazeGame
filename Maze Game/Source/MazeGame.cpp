@@ -56,16 +56,21 @@ double ToAngle(double i) {
     return r;
 }
 double InvertAngle(double n) {
-    return ToAngle(n * -1);
+    return -ToAngle(n * -1);
 }
 double AngleDiff(double n1, double n2) {
-    /* i need to get angles in two different coordinates.
-       One where 0 is on left, and the other on right.
-       Now, how do I convert that?
-    */
-    double def = ToAngle(n1) - ToAngle(n2);
-    double inv = ToAngle(n1) - InvertAngle(n2);
-    return abs(def) < abs(inv) ? def : inv;
+    /* from n1 to n2 */
+    double res = 0;
+    double angles[] = {
+        ToAngle(n2) - ToAngle(n1),
+        ToAngle(n2) - InvertAngle(n1),
+        InvertAngle(n2) - ToAngle(n1),
+        InvertAngle(n2) - InvertAngle(n1)
+    };
+    for (int i = 0; i < 4; i++) {
+        if (res == 0 || abs(angles[i]) < abs(res)) res = angles[i];
+    }
+    return res;
 }
 double AngAngDirTurn(double playerang, double nplayerang) {
     return -1;

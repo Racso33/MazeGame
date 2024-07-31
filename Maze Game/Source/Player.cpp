@@ -22,7 +22,7 @@ void Player_PickDirection(Player* p) {
     }
     else if (!Intersection(p->pos, back)) {
         p->dir = DirTurn(p->dir, 'b');
-        p->tang -= M_PI;
+        p->tang += M_PI;
     }
     p->target = { (int)p->pos.x + 0.5 + directions[p->dir][0],
                   (int)p->pos.y + 0.5 + directions[p->dir][1] };
@@ -40,13 +40,11 @@ void Player_Update(Player* p) {
         Player_PickDirection(p);
     }
 
-    if (abs(abs(p->tang) - abs(p->ang)) - 0.04 >= 0) {
-        /* This is broken */
-        //double a = ToAngle(p->tang - p->ang) - M_PI;
-        //double m = abs(a / (ToAngle(p->ang) - M_PI)) * 0.1;
-        //double turn = p->turnspeed * m;
-        double turn = p->turnspeed;
-        if (p->ang < p->tang) {
+    double d = AngleDiff(p->ang, p->tang);
+    if (abs(d) - 0.04 >= 0) {
+        double smoothf = 1.5;
+        double turn = abs(d * p->turnspeed * smoothf);
+        if (d > 0) {
             p->ang += turn;
         }
         else {
