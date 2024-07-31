@@ -123,14 +123,13 @@ void DrawFirstPerson() {
     int swidth, sheight;
     IOGetWindowDims(&swidth, &sheight);
     int raycount = swidth/4;
-    double range = raycount * fov;
     for (i = 0; i < raycount; i++) {
         double rang = ToAngle(player.ang - (fov / 2) + i * (fov/raycount));
         Point p2 = Raycast(player.pos, rang);
         bool colhit = false;
         if (p2.x - trunc(p2.x)) colhit = true;
-        double h = hypot(p2.x - player.pos.x, p2.y - player.pos.y) * cos(rang - player.ang);
-        double lh = sheight/ h * wallheight + 0.01;
+        double h = hypot(p2.x - player.pos.x, p2.y - player.pos.y) * cos(AngleDiff(player.ang, rang));
+        double lh = sheight / h * wallheight;
         double lw = (double)swidth / raycount;
         int r = colors[0] ? 230 : 170;
         if (colhit) r *= 0.7;

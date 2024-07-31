@@ -31,20 +31,35 @@ void GetMap(int* hcells, int* vcells) {
     *vcells = VCellCount;
 }
 
-Point StepColumn(Point p, double angle) {
-    double r = tan(angle);
-    double cp = p.x - trunc(p.x);
+Point StepColumn(Point p, double angle, int steps) {
+    double r = tan(angle) + 0.00000001;
     double nc = 1;
     if (angle < M_PI / 2 || (angle <= M_PI*2 && angle > M_PI + M_PI / 2)) nc = 1;
-    else if (cp == 0) nc = -1;
-    else nc = 0;
-    double dist = nc - cp;
-    Point res = { p.x + (dist), p.y + (dist * r)};
-    return res;
+    else nc = -1;
+    int targetcol = nc == 1 ? trunc(p.x + (steps+0.01) * nc) : ceil(p.x + (steps + 0.01) * nc);
+    double dist = targetcol - p.x;
+    return { p.x + dist, p.y + (r * dist) };
+
+    //double r = tan(angle);
+    //double cp = p.x - trunc(p.x);
+    //double nc = 1;
+    //if (angle < M_PI / 2 || (angle <= M_PI*2 && angle > M_PI + M_PI / 2)) nc = 1;
+    //else if (cp == 0) nc = -1;
+    //else nc = 0;
+    //double dist = nc - cp;
+    //Point res = { p.x + (dist), p.y + (dist * r)};
+    //return res;
 }
-Point StepRow(Point p, double angle) {
-    double t = tan(angle);
-    double r = 1 / (t != 0 ? t : -0.00001);
+Point StepRow(Point p, double angle, int steps) {
+    double r = 1 / (tan(angle) + 0.000000001);
+    double nc = 1;
+    if (angle >= 0 && angle < M_PI) nc = 1;
+    else nc = -1;
+    double targetrow = nc == 1 ? trunc(p.y + (steps+0.01) * nc) : ceil(p.y + (steps + 0.01) * nc);
+    double dist = targetrow - p.y;
+    return { p.x + (r * dist), p.y + dist };
+    /*double t = tan(angle);
+    double r = 1 / (t != 0 ? t : +0.0001);
     double cp = p.y - trunc(p.y);
     double nc = 1;
     if (angle >= 0 && angle < M_PI) nc = 1;
@@ -52,7 +67,7 @@ Point StepRow(Point p, double angle) {
     else nc = 0;
     double dist = nc - cp;
     Point res = { p.x + (dist * r), p.y + dist };
-    return res;
+    return res;*/
 }
 Point Shortest(Point p, Point p1, Point p2) {
     double h1 = hypot(p1.x - p.x, p1.y - p.y);
@@ -82,14 +97,18 @@ Point RaycastEx(Point p, double angle, int maxsteps, bool* error) {
         Rounding errors 
     */
     Point p1 = p, p2 = p;
+    int ps1 = 1, ps2 = 1;
     int w1 = 0, w2 = 0;
     int steps = -1;
     while((!w1 || !w2) && (maxsteps == -1 || steps < maxsteps)) {
-        if(!w1) p1 = StepColumn(p1, angle);
-        if(!w2) p2 = StepRow(p2, angle);
+        p1 = StepColumn(p, angle, ps1);
+        p2 = StepRow(p, angle, ps2);
 
         w1 = GetVWall(p1.x, p1.y);
         w2 = GetHWall(p2.y, p2.x);
+
+        if (!w1) ps1++;
+        if (!w2) ps2++;
 
         steps++;
     }
